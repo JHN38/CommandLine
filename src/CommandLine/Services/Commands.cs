@@ -8,7 +8,7 @@ public partial class Commands : List<ICommand>, ICommands
     public Commands()
     {
         Add("h", cmdStrAction: PrintHelp, "Lists available commands and get help on a command <cmd>");
-        Add("e", ExitConsole, "Exits the console");
+        Add("e", Commands.ExitConsole, "Exits the console");
     }
 
     public ICommands Add(string cmd, Action cmdAction, string? description = null)
@@ -34,8 +34,10 @@ public partial class Commands : List<ICommand>, ICommands
 
     public new void Add(ICommand item)
     {
-        if (this.Any(c => c.Cmd == item.Cmd))
+        if (Exists(c => c.Cmd == item.Cmd))
+        {
             throw new ArgumentException(@$"A command ""{item.Cmd}"" already exists.");
+        }
 
         base.Add(item);
     }

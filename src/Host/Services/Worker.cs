@@ -23,7 +23,7 @@ public class Worker : IHostedService
         return Task.CompletedTask;
     }
 
-    public void Test(string[] parameters)
+    public static void Test(string[] parameters)
     {
         Console.WriteLine("This is a test.");
     }

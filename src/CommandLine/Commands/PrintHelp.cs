@@ -21,7 +21,13 @@ public partial class Commands : List<ICommand>, ICommands
             return;
         }
 
-        if (this.FirstOrDefault(c => c.Cmd?.Equals(parameters[0], StringComparison.OrdinalIgnoreCase) == true) is not ICommand cmd)
+        ICommand cmd;
+
+        try
+        {
+            cmd = this.First(c => c.Cmd?.Equals(parameters[0], StringComparison.OrdinalIgnoreCase) == true);
+        }
+        catch
         {
             Console.WriteLine(@"Command ""{0}"" not found.", parameters[0]);
             return;

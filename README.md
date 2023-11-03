@@ -4,7 +4,7 @@ The **CommandLine** package adds a quick and intuitive command line system to an
 
 #### Initialization
 
-First the **CommandLine** using needs to be addded into the Program.cs
+First the **CommandLine** using needs to be added into the Program.cs
 
 ```c#
 using CommandLine;

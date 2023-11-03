@@ -26,31 +26,42 @@ public class CommandHost : BackgroundService
             while (!stoppingToken.IsCancellationRequested)
             {
                 Console.Write("> ");
-                if (Console.ReadLine() is string commandLine && !string.IsNullOrWhiteSpace(commandLine))
+                if (Console.ReadLine() is not string commandLine || string.IsNullOrWhiteSpace(commandLine))
                 {
-                    var args = Regex.Matches(commandLine, @"[\""].+?[\""]|[^ ]+")
-                        .Cast<Match>()
-                        .Select(x => x.Value.Trim('"'))
-                        .ToArray();
+                    continue;
+                }
 
-                    var commandName = args[0];
-                    var commandParameters = args[1..];
+                var args = Regex.Matches(commandLine, @"[\""].+?[\""]|[^ ]+", RegexOptions.IgnoreCase, TimeSpan.FromSeconds(15))
+                    .Cast<Match>()
+                    .Select(x => x.Value.Trim('"'))
+                    .ToArray();
 
-                    if (_commands.FirstOrDefault(c => c.Cmd.Equals(commandName)) is Command cmd)
-                    {
-                        if (cmd.CmdAction is not null)
-                            cmd.CmdAction();
+                var commandName = args[0];
+                var commandParameters = args[1..];
 
-                        if (cmd.CmdStrAction is not null)
-                            cmd.CmdStrAction(commandParameters);
+                ICommand? cmd;
 
-                        if (cmd.AsyncCmdAction is not null)
-                            await cmd.AsyncCmdAction(commandParameters);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Command not found.");
-                    }
+                try
+                {
+                    cmd = _commands.First(c => c.Cmd.Equals(commandName));
+                }
+                catch
+                {
+                    Console.WriteLine(Text.CommandNotFound);
+                    continue;
+                }
+
+                if (cmd.CmdAction is not null)
+                {
+                    cmd.CmdAction();
+                }
+                else if (cmd.CmdStrAction is not null)
+                {
+                    cmd.CmdStrAction(commandParameters);
+                }
+                else if (cmd.AsyncCmdAction is not null)
+                {
+                    await cmd.AsyncCmdAction(commandParameters);
                 }
             }
         }, stoppingToken);
