@@ -1,8 +1,10 @@
 ﻿using CommandLine.Interfaces;
-using CommandLine.Models;
 using CommandLine.Services;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace CommandLine;
+
 public static class CommandLineExtensions
 {
     public static IHostBuilder UseCommandLine(this IHostBuilder builder)
